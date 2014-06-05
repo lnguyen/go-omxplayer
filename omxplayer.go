@@ -34,7 +34,7 @@ func (o *OmxPlayer) PlayFile(filename string) error {
 }
 
 func (o *OmxPlayer) PlayPause() error {
-	err := o.Method("PlayPause")
+	err := o.Method("org.mpris.MediaPlayer2.Player.PlayPause")
 	return err
 }
 
