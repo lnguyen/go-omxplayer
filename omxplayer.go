@@ -6,7 +6,7 @@ var sdbus *dbus.Object
 
 func connDbus() *dbus.Object {
 
-	conn, err := dbus.SessionBus()
+	conn, err := dbus.SessionBusPrivate()
 
 	// couldnt connect to session bus
 	if err != nil {
