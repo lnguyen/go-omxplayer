@@ -17,11 +17,14 @@ func connDbus() *dbus.Object {
 }
 
 func Status() *dbus.Variant {
+	if sdbus == nil {
+		sdbus = connDbus()
+	}
 
 	pstatus, err := sdbus.GetProperty("org.mpris.MediaPlayer2.Player.PlaybackStatus")
 
 	if err != nil {
-		panic(err) // most likely spotify not running
+		panic(err) // most likely omxplayer not running
 	}
 
 	return &pstatus
