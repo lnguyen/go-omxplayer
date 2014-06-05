@@ -1,9 +1,11 @@
 package omxplayer
 
 import (
+	"errors"
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"time"
 
 	dbus "github.com/hoffoo/go.dbus"
 )
@@ -19,12 +21,20 @@ func New() OmxPlayer {
 	return OmxPlayer{}
 }
 
+func (o *OmxPlayer) IsPlaying() bool {
+	return !o.command.ProcessState.Exited()
+}
+
 func (o *OmxPlayer) PlayFile(filename string) error {
+	if o.IsPlaying() {
+		return errors.New("Error file is playing, please stop and try again")
+	}
 	o.command = exec.Command("omxplayer", "-o", "hdmi", filename)
 	err := o.command.Start()
 	if err != nil {
 		return err
 	}
+	time.Sleep(1000 * time.Millisecond)
 	env, err := ioutil.ReadFile("/tmp/omxplayerdbus")
 	if err != nil {
 		return err
@@ -33,8 +43,15 @@ func (o *OmxPlayer) PlayFile(filename string) error {
 	return nil
 }
 
+func (o *OmxPlayer) StopFile() error {
+	o.command.Process.Kill()
+	_, err := exec.Command("killall", "omxplayer.bin").Run()
+	return err
+}
+
+//@TODO DOESNT WORK ATM :(
 func (o *OmxPlayer) PlayPause() error {
-	err := o.Method("org.mpris.MediaPlayer2.Player.PlayPause")
+	err := o.Method("org.mpris.MediaPlayer2.omxplayer.Player.PlayPause")
 	return err
 }
 
@@ -46,7 +63,7 @@ func (o *OmxPlayer) Method(method string) error {
 }
 
 func connDbus() *dbus.Object {
-	conn, err := dbus.SessionBus()
+	conn, err := dbus.SessionBusPrivate()
 
 	// couldnt connect to session bus
 	if err != nil {
