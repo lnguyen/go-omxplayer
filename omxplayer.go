@@ -13,6 +13,10 @@ type OmxPlayer struct {
 	command exec.Cmd
 }
 
+func New() OmxPlayer {
+	return OmxPlayer{}
+}
+
 func (o *OmxPlayer) PlayFile(filename string) error {
 	o.command = exec.Command("omxplayer", "-o", "hdmi", filename)
 	err := o.command.Run()
