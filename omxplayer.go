@@ -45,7 +45,7 @@ func (o *OmxPlayer) PlayFile(filename string) error {
 
 func (o *OmxPlayer) StopFile() error {
 	o.command.Process.Kill()
-	_, err := exec.Command("killall", "omxplayer.bin").Run()
+	err := exec.Command("killall", "omxplayer.bin").Run()
 	return err
 }
 
