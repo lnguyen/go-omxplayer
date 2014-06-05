@@ -22,7 +22,10 @@ func New() OmxPlayer {
 }
 
 func (o *OmxPlayer) IsPlaying() bool {
-	return !o.command.ProcessState.Exited()
+	if o.command != nil {
+		return !o.command.ProcessState.Exited()
+	}
+	return false
 }
 
 func (o *OmxPlayer) PlayFile(filename string) error {
