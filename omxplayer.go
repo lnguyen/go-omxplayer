@@ -32,7 +32,7 @@ func (o *OmxPlayer) PlayFile(filename string) error {
 	if o.IsPlaying() {
 		return errors.New("Error file is playing, please stop and try again")
 	}
-	o.command = exec.Command("omxplayer", "-o", "hdmi", filename)
+	o.command = exec.Command("omxplayer", "-o", "hdmi", "--loop", filename)
 	err := o.command.Start()
 	if err != nil {
 		return err
