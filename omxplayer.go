@@ -23,7 +23,9 @@ func New() OmxPlayer {
 
 func (o *OmxPlayer) IsPlaying() bool {
 	if o.command != nil {
-		return !o.command.ProcessState.Exited()
+		if o.command.ProcessState != nil {
+			return !o.command.ProcessState.Exited()
+		}
 	}
 	return false
 }
