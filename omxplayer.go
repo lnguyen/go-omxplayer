@@ -13,8 +13,9 @@ import (
 var sdbus *dbus.Object
 
 type OmxPlayer struct {
-	sdbus   *dbus.Object
-	command *exec.Cmd
+	sdbus    *dbus.Object
+	command  *exec.Cmd
+	filename string
 }
 
 func New() OmxPlayer {
@@ -30,11 +31,19 @@ func (o *OmxPlayer) IsPlaying() bool {
 	return false
 }
 
+func (o *OmxPlayer) FilePlaying() string {
+	if o.filename != "" {
+		return o.filename
+	}
+	return ""
+}
+
 func (o *OmxPlayer) PlayFile(filename string) error {
 	if o.IsPlaying() {
 		return errors.New("Error file is playing, please stop and try again")
 	}
-	o.command = exec.Command("omxplayer", "-o", "hdmi", "--loop", filename)
+	o.command = exec.Command("omxplayer", "-o", "local", "--loop", filename)
+	o.filename = filename
 	err := o.command.Start()
 	if err != nil {
 		return err
@@ -50,6 +59,7 @@ func (o *OmxPlayer) PlayFile(filename string) error {
 
 func (o *OmxPlayer) StopFile() error {
 	o.command.Process.Kill()
+	o.filename = ""
 	err := exec.Command("killall", "omxplayer.bin").Run()
 	return err
 }
