@@ -24,9 +24,7 @@ func New() OmxPlayer {
 
 func (o *OmxPlayer) IsPlaying() bool {
 	if o.command != nil {
-		if o.command.ProcessState != nil {
-			return !o.command.ProcessState.Exited()
-		}
+		return true
 	}
 	return false
 }
@@ -42,7 +40,7 @@ func (o *OmxPlayer) PlayFile(filename string) error {
 	if o.IsPlaying() {
 		return errors.New("Error file is playing, please stop and try again")
 	}
-	o.command = exec.Command("omxplayer", "-o", "local", "--loop", filename)
+	o.command = exec.Command("omxplayer", "-b", "-o", "local", "--loop", filename)
 	o.filename = filename
 	err := o.command.Start()
 	if err != nil {
